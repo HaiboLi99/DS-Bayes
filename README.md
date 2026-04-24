@@ -1,10 +1,10 @@
 # Data-space Bayesian inference
 
-DS-Bayes is a data-sapce based iterative method for appriximate high-dimensional Bayesian inverse problems.
+DS-Bayes is a data-space based iterative method for approximating high-dimensional Bayesian inverse problems.
 
-The current code is focus on lienar inverse problems, which based on the quotient space Golub-Kahan bidiagonalization method. 
+The current code is focus on linear inverse problems, which based on the quotient-space Golub-Kahan bidiagonalization method. 
 
-It can simultaneously estimate the hyperparameter as well as posterior approximation in a matrix-free manner within the data-space formulation of the Bayesian linear inverse problems. 
+It can simultaneously estimate the hyperparameter as well as approximate the Bayesian posterior in a matrix-free manner within the data-space formulation.
 
 
 
