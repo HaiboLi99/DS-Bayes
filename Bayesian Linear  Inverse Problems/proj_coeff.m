@@ -64,10 +64,10 @@ if plotON == 1
     semilogy(1:kk, abs(coeff), 'v-', ...
     'LineWidth',1.5, ...
     'MarkerSize',5);
-    legend('$\hat{\mu}_i$', '$|P_{G_{i}}\Gamma^{-1}y|$', 'Location', 'northeast','interpreter','latex','fontsize',20);
-    set(gca, 'FontSize', 12);
-    xlabel('$i$','interpreter','latex','fontsize',20);
-    ylabel('Gen-eig / Proj','interpreter','latex','fontsize',16);
+    legend('$\hat{\mu}_i$', '$|P_{G_{i}}\Gamma^{-1}y|$', 'Location', 'northeast','interpreter','latex','fontsize',28);
+    set(gca, 'FontSize', 20);
+    xlabel('$i$','interpreter','latex','fontsize',34);
+    ylabel('Gen-eig / Proj','fontsize',30);
     grid on;
     grid minor;
 end

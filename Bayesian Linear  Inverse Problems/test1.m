@@ -33,16 +33,37 @@ reorth = 2;
 kk = 25;
    
 [X1, V1, B1, Lam1, L_vals] = QGKB_HB(A, b, M, N, kk);
-sigma_comp = 1.0 ./ sqrt(Lam1);
+sigma_comp1 = 1.0 ./ sqrt(Lam1);
 k = size(X1,2);
+[X2, V2, Lam2, GCV, iterstop2] = genGKBhyb(A, b, M, N, k);
+sigma_comp2 = 1.0 ./ sqrt(Lam2);
 
-er1 = zeros(k,1);  % errors of solution
-er2 = zeros(k,1);  % errors of lambda
+er1 = zeros(k,1);  % errors of  Q-GKB solution
+er2 = zeros(k,1);  % errors of hyb_WGCV solution
+er3 = zeros(k,1);  % errors of lambda of Q-GKB
+er4 = zeros(k,1);  % errors of lambda of hyb_WGCV
 xn = norm(x_true);
 for i =1:k
     er1(i) = norm(x_true-X1(:,i)) / xn;
-    er2(i) = abs(sigma_comp(i)-sigma) / sigma;
+    er2(i) = norm(x_true-X2(:,i)) / xn;
+    er3(i) = abs(sigma_comp1(i)-sigma) / sigma;
+    er4(i) = abs(sigma_comp2(i)-sigma) / sigma;
 end
+
+
+% compute optimal lambda and that by GCV
+% M1 = diag(M);
+% Lm = sqrt(1./M1);
+% Lm = diag(Lm);
+% N1 = gen_kernel1d(a1, a2, n, 'gauss', 0.4);
+% N1 = N1 + 1e-10*eye(n);
+% Ln = chol(inv(N1));
+% [x_opt, ~, lambda_opt] = Tikopt(Lm*A, Ln, Lm*b, x_true);
+% sigma_opt = 1 / lambda_opt;
+% 
+% [U, sm,Xb, ~, ~] = gsvd1(Lm*A, Ln);
+% [lambda_gcv,G_gcv,reg_param] = gcv(U,sm,Lm*b,'Tikh');
+% sigma_gcv = 1/ lambda_gcv;
 
 
 %%-------- plot -----------------------------------------
@@ -51,11 +72,11 @@ end
 fig = figure('Units','pixels', 'Position',[100, 80, 800, 600]);
 t = tiledlayout(1, 1, 'TileSpacing','compact', 'Padding','compact');
 plot(I1, x_true,'b-', 'LineWidth', 2.0);
-legend('True sol','fontsize',16);
+legend('True sol','fontsize',18);
 xlim([-pi/2 pi/2]);
 xticks(-pi/2:pi/4:pi/2)
 xticklabels({'-\pi/2', '-\pi/4', '0', '\pi/4', '\pi/2'});
-set(gca, 'FontSize', 14);
+set(gca, 'FontSize', 18);
 
 darkGray = [0.25, 0.25, 0.25];
 fig = figure('Units','pixels', 'Position',[100, 80, 800, 600]);
@@ -66,42 +87,66 @@ legend('Noisy data','fontsize',16);
 xlim([-pi/2 pi/2]);
 xticks(-pi/2:pi/4:pi/2)
 xticklabels({'-\pi/2', '-\pi/4', '0', '\pi/4', '\pi/2'});
-set(gca, 'FontSize', 14, 'LineWidth', 1.1, 'Box', 'on');
+set(gca, 'FontSize', 18, 'LineWidth', 1.1, 'Box', 'on');
 
 
 fig = figure('Units','pixels', 'Position',[100, 80, 800, 600]);
 t = tiledlayout(1, 1, 'TileSpacing','compact', 'Padding','compact');
 semilogy(1:k, er1, '-o','Color',[0.0000,0.4470,0.7410],'MarkerIndices',1:1:k,...
     'MarkerSize',5,'MarkerFaceColor',[0.0000,0.4470,0.7410],'LineWidth',1.5);
-set(gca, 'FontSize', 12);
-xlabel('Iteration','fontsize',16);
-ylabel('Relative  error','fontsize',16);
+hold on;
+semilogy(1:k, er2, '-x','Color','r','MarkerIndices',1:2:k,...
+    'MarkerSize',6,'MarkerFaceColor','r','LineWidth',1.5);
+legend('QGKB-EB', 'gen-HyBR', 'Location', 'northeast','fontsize',24);
+set(gca, 'FontSize', 20);
+xlabel('Iteration','fontsize',28);
+ylabel('Relative  error','fontsize',28);
 grid on;
 grid minor;
-title('Error of iterated posterior mean','fontsize',18)
+title('Error of iterated posterior mean','fontsize',26,'FontWeight','normal')
 
 fig = figure('Units','pixels', 'Position',[100, 80, 800, 600]);
 t = tiledlayout(1, 1, 'TileSpacing','compact', 'Padding','compact');
-semilogy(1:k, er2, '->','Color',[1,0.47,0.1],'MarkerIndices',1:1:k,...
+semilogy(1:k, er3, '->','Color',[1,0.47,0.1],'MarkerIndices',1:2:k,...
     'MarkerSize',6,'MarkerFaceColor',[1.0,0.47,0.1],'LineWidth',1.5);
-% legend('QGKB\_hyb', 'Location', 'northeast','fontsize',15);
-set(gca, 'FontSize', 12);
-xlabel('Iteration','fontsize',16);
-ylabel('Relative  error','fontsize',16);
+hold on;
+semilogy(1:k, er4, '-o','Color',[0 0.7 0.7],'MarkerIndices',1:2:k,...
+    'MarkerSize',6,'MarkerFaceColor',[0 0.7 0.7],'LineWidth',1.5);
+legend('QGKB-EB', 'gen-HyBR', 'Location', 'northeast','fontsize',24);
+set(gca, 'FontSize', 18);
+xlabel('Iteration','fontsize',28);
+ylabel('Relative  error','fontsize',28);
 grid on;
 grid minor;
-title('Error of iterated hyperparameter','fontsize',18)
+title('Error of iterated hyperparameter','fontsize',26,'FontWeight','normal');
+
+fig = figure('Units','pixels', 'Position',[100, 80, 800, 600]);
+t = tiledlayout(1, 1, 'TileSpacing','compact', 'Padding','compact');
+semilogy(1:k, Lam1, '->','Color',[1,0.47,0.1],'MarkerIndices',1:2:k,...
+    'MarkerSize',6,'MarkerFaceColor',[1.0,0.47,0.1],'LineWidth',1.5);
+hold on;
+semilogy(1:k, Lam2, '-o','Color',[0 0.7 0.7],'MarkerIndices',1:2:k,...
+    'MarkerSize',6,'MarkerFaceColor',[0 0.7 0.7],'LineWidth',1.5);
+hold on;
+semilogy(1:k, ones(k,1)/sigma^2, '-','Color','k','LineWidth',2);
+legend('QGKB-EB', 'gen-HyBR', 'ground truth', 'Location', 'northeast','fontsize',24);
+set(gca, 'FontSize', 20);
+xlabel('Iteration','interpreter','latex','fontsize',30);
+ylabel('$\lambda_k$','interpreter','latex','fontsize',30);
+grid on;
+grid minor;
+title('Estimated $\lambda$','interpreter','latex','fontsize',28);
 
 fig = figure('Units','pixels', 'Position',[100, 80, 800, 600]);
 t = tiledlayout(1, 1, 'TileSpacing','compact', 'Padding','compact');
 plot(I1, x_true,'b-', 'LineWidth', 2.0);
 hold on
 plot(I1, X1(:,k),'m--', 'LineWidth', 2.0);
-legend('True sol', 'Iter sol','fontsize',16);
+legend('True sol', 'Iter sol','fontsize',26);
 xlim([-pi/2 pi/2]);
 xticks(-pi/2:pi/4:pi/2)
 xticklabels({'-\pi/2', '-\pi/4', '0', '\pi/4', '\pi/2'});
-set(gca, 'FontSize', 14);
+set(gca, 'FontSize', 22);
 
 
 %%------------------------------------------------------------------------
@@ -136,41 +181,41 @@ set(gca, 'FontSize', 14);
 % grid minor;
 
 
-[dF, dF_bnd, zeta, gamma] = forstner_qgkb(A, N, M, b, V1, B1, Lam1);
-[dKL, dKL_bnd, ~, ~] = kl_qgkb(A, N, M, b, V1, B1, Lam1);
+% [dF, dF_bnd, zeta, gamma] = forstner_qgkb(A, N, M, b, V1, B1, Lam1);
+% [dKL, dKL_bnd, ~, ~] = kl_qgkb(A, N, M, b, V1, B1, Lam1);
 
-fig = figure('Units','pixels', 'Position',[100, 80, 800, 600]);
-t = tiledlayout(1, 1, 'TileSpacing','compact', 'Padding','compact');
-semilogy(1:k, dF, '-o','Color','[0.3010 0.7450 0.9330]','MarkerIndices',1:1:k,'MarkerSize',6,'MarkerFaceColor','[0.3010 0.7450 0.9330]','LineWidth',1.5);
-hold on
-semilogy(1:k, dF_bnd, '-s','Color','[0.8500 0.3250 0.0980]','MarkerIndices',1:1:k,'MarkerSize',6,'MarkerFaceColor','[0.8500 0.3250 0.0980]','LineWidth',1.5);
-legend('$d_{F}(C_{\lambda},\widehat{C}_{\lambda}^{(k)})$', 'upper bound', 'Location', 'northeast','interpreter','latex','fontsize',20);
-set(gca, 'FontSize', 12);
-xlabel('Iteration','fontsize',16);
-ylabel('Föstner  distance','fontsize',16);
-grid on;
-grid minor;
+% fig = figure('Units','pixels', 'Position',[100, 80, 800, 600]);
+% t = tiledlayout(1, 1, 'TileSpacing','compact', 'Padding','compact');
+% semilogy(1:k, dF, '-o','Color','[0.3010 0.7450 0.9330]','MarkerIndices',1:1:k,'MarkerSize',6,'MarkerFaceColor','[0.3010 0.7450 0.9330]','LineWidth',1.5);
+% hold on
+% semilogy(1:k, dF_bnd, '-s','Color','[0.8500 0.3250 0.0980]','MarkerIndices',1:1:k,'MarkerSize',6,'MarkerFaceColor','[0.8500 0.3250 0.0980]','LineWidth',1.5);
+% legend('$d_{F}(C_{\lambda},\widehat{C}_{\lambda}^{(k)})$', 'upper bound', 'Location', 'northeast','interpreter','latex','fontsize',20);
+% set(gca, 'FontSize', 16);
+% xlabel('Iteration','fontsize',20);
+% ylabel('Föstner  distance','fontsize',20);
+% grid on;
+% grid minor;
 
-fig = figure('Units','pixels', 'Position',[100, 80, 800, 600]);
-t = tiledlayout(1, 1, 'TileSpacing','compact', 'Padding','compact');
-semilogy(1:k, dKL, '-o','Color','[0.1 0.2 0.8]','MarkerIndices',1:1:k,...
-    'MarkerSize',6,'MarkerFaceColor','[0.1 0.2 0.8]','LineWidth',1.5);
-hold on
-semilogy(1:k, dKL_bnd, '-d','Color','[0.7350 0.0780 0.0840]','MarkerIndices',1:1:k,...
-    'MarkerSize',6,'MarkerFaceColor','[0.7350 0.0780 0.0840]','LineWidth',1.5);
-legend('$D_{KL}(\widehat{\pi}_{k}\|\pi)$', 'upper bound', 'Location', 'northeast','interpreter','latex','fontsize',20);
-set(gca, 'FontSize', 12);
-xlabel('Iteration','fontsize',16);
-ylabel('KL  divergence','fontsize',16);
-grid on;
-grid minor;
+% fig = figure('Units','pixels', 'Position',[100, 80, 800, 600]);
+% t = tiledlayout(1, 1, 'TileSpacing','compact', 'Padding','compact');
+% semilogy(1:k, dKL, '-o','Color','[0.1 0.2 0.8]','MarkerIndices',1:1:k,...
+%     'MarkerSize',6,'MarkerFaceColor','[0.1 0.2 0.8]','LineWidth',1.5);
+% hold on
+% semilogy(1:k, dKL_bnd, '-d','Color','[0.7350 0.0780 0.0840]','MarkerIndices',1:1:k,...
+%     'MarkerSize',6,'MarkerFaceColor','[0.7350 0.0780 0.0840]','LineWidth',1.5);
+% legend('$D_{KL}(\widehat{\pi}_{k}\|\pi)$', 'upper bound', 'Location', 'northeast','interpreter','latex','fontsize',20);
+% set(gca, 'FontSize', 16);
+% xlabel('Iteration','fontsize',20);
+% ylabel('KL  divergence','fontsize',20);
+% grid on;
+% grid minor;
 
 
 %%--------------------------------------------------------------
 % Plot 6 random 2D marginal contour comparisons in a 2x3 layout.
-lambda = Lam1(k);
-Vk = V1(:,1:k);
-Bk = B1(1:k+1,1:k);
-[m, C] = exact_post(lambda, N, A, M, b);
-[mhat, Chat] = approx_post(lambda, N, A, M, b, Bk, Vk);
-plot_gaussian_contour(m, C, mhat, Chat, 2026);
+% lambda = Lam1(k);
+% Vk = V1(:,1:k);
+% Bk = B1(1:k+1,1:k);
+% [m, C] = exact_post(lambda, N, A, M, b);
+% [mhat, Chat] = approx_post(lambda, N, A, M, b, Bk, Vk);
+% plot_gaussian_contour(m, C, mhat, Chat, 2026);

@@ -64,9 +64,9 @@ set(gca,'YDir','normal')
 colormap(parula)
 colorbar
 set(gca, 'FontSize', 12);
-xlabel('$t_{1}$','interpreter','latex','fontsize',20); 
-ylabel('$t_{2}$','interpreter','latex','fontsize',20);
-title('True image','FontSize',18,'FontWeight','normal')
+xlabel('$t_{1}$','interpreter','latex','fontsize',24); 
+ylabel('$t_{2}$','interpreter','latex','fontsize',24);
+title('True image','FontSize',20,'FontWeight','normal')
 nexttile
 imagesc([0,1], [0,1], Bobs)
 axis image
@@ -74,9 +74,9 @@ set(gca,'YDir','normal')
 colormap(parula)
 colorbar
 set(gca, 'FontSize', 12);
-xlabel('$t_{1}$','interpreter','latex','fontsize',20); 
-ylabel('$t_{2}$','interpreter','latex','fontsize',20);
-title('Blurred image','FontSize',18,'FontWeight','normal')
+xlabel('$t_{1}$','interpreter','latex','fontsize',24); 
+ylabel('$t_{2}$','interpreter','latex','fontsize',24);
+title('Blurred image','FontSize',20,'FontWeight','normal')
 
 
 % -------- convergence history ----------------------------------
@@ -84,24 +84,24 @@ fig = figure('Units','pixels', 'Position',[100, 80, 800, 600]);
 t = tiledlayout(1, 1, 'TileSpacing','compact', 'Padding','compact');
 semilogy(1:k, er1, '-o','Color',[0.0000,0.4470,0.7410],'MarkerIndices',1:9:k,...
     'MarkerSize',5,'MarkerFaceColor',[0.0000,0.4470,0.7410],'LineWidth',1.5);
-    set(gca, 'FontSize', 12);
-xlabel('Iteration','fontsize',16);
-ylabel('Relative  error','fontsize',16);
+set(gca, 'FontSize', 18);
+xlabel('Iteration','fontsize',24);
+ylabel('Relative  error','fontsize',24);
 grid on;
 grid minor;
-title('Error of iterated posterior mean','fontsize',18,'FontWeight','normal')
+title('Error of iterated posterior mean','fontsize',26,'FontWeight','normal')
 
 fig = figure('Units','pixels', 'Position',[100, 80, 800, 600]);
 t = tiledlayout(1, 1, 'TileSpacing','compact', 'Padding','compact');
 semilogy(1:k, er2, '->','Color',[1,0.47,0.1],'MarkerIndices',1:9:k,...
     'MarkerSize',6,'MarkerFaceColor',[1.0,0.47,0.1],'LineWidth',1.5);
 % legend('QGKB\_hyb', 'Location', 'northeast','fontsize',15);
-set(gca, 'FontSize', 12);
-xlabel('Iteration','fontsize',16);
-ylabel('Relative  error','fontsize',16);
+set(gca, 'FontSize', 18);
+xlabel('Iteration','fontsize',24);
+ylabel('Relative  error','fontsize',24);
 grid on;
 grid minor;
-title('Error of iterated hyperparameter','fontsize',18,'FontWeight','normal');
+title('Error of iterated hyperparameter','fontsize',26,'FontWeight','normal');
 
 
 % ---- prior and deblurred image ------------------------------------------
@@ -122,30 +122,30 @@ axis image
 set(gca,'YDir','normal')
 colormap(parula)
 colorbar
-set(gca, 'FontSize', 12);
-xlabel('$t_{1}$','interpreter','latex','fontsize',20); 
-ylabel('$t_{2}$','interpreter','latex','fontsize',20);
-title('Prior image','FontSize',18,'FontWeight','normal');
+set(gca, 'FontSize', 16);
+xlabel('$t_{1}$','interpreter','latex','fontsize',28); 
+ylabel('$t_{2}$','interpreter','latex','fontsize',28);
+title('Prior image','FontSize',20,'FontWeight','normal');
 nexttile
 imagesc([0,1], [0,1], X_deblur);
 axis image
 set(gca,'YDir','normal')
 colormap(parula)
 colorbar
-set(gca, 'FontSize', 12);
-xlabel('$t_{1}$','interpreter','latex','fontsize',20); 
-ylabel('$t_{2}$','interpreter','latex','fontsize',20);
-title('Deblurred image','FontSize',18,'FontWeight','normal');
+set(gca, 'FontSize', 16);
+xlabel('$t_{1}$','interpreter','latex','fontsize',28); 
+ylabel('$t_{2}$','interpreter','latex','fontsize',28);
+title('Deblurred image','FontSize',20,'FontWeight','normal');
 nexttile
 imagesc([0,1], [0,1], X_deblur_var);
 axis image
 set(gca,'YDir','normal')
 colormap(parula)
 colorbar
-set(gca, 'FontSize', 12);
-xlabel('$t_{1}$','interpreter','latex','fontsize',20); 
-ylabel('$t_{2}$','interpreter','latex','fontsize',20);
-title('Approx posterior variance','FontSize',18,'FontWeight','normal');
+set(gca, 'FontSize', 16);
+xlabel('$t_{1}$','interpreter','latex','fontsize',28); 
+ylabel('$t_{2}$','interpreter','latex','fontsize',28);
+title('Approx posterior variance','FontSize',20,'FontWeight','normal');
 
 
 %%---- compact exact and approximate mean/covariance -----------
@@ -162,20 +162,20 @@ axis image
 set(gca,'YDir','normal')
 colormap(parula)
 colorbar
-set(gca, 'FontSize', 12);
-xlabel('$t_{1}$','interpreter','latex','fontsize',20); 
-ylabel('$t_{2}$','interpreter','latex','fontsize',20);
-title('Posterior mean','FontSize',18,'FontWeight','normal');
+set(gca, 'FontSize', 16);
+xlabel('$t_{1}$','interpreter','latex','fontsize',28); 
+ylabel('$t_{2}$','interpreter','latex','fontsize',28);
+title('Exact posterior mean','FontSize',20,'FontWeight','normal');
 nexttile
 imagesc([0,1], [0,1], X_err);
 axis image
 set(gca,'YDir','normal')
 colormap(parula)
 colorbar
-set(gca, 'FontSize', 12);
-xlabel('$t_{1}$','interpreter','latex','fontsize',20); 
-ylabel('$t_{2}$','interpreter','latex','fontsize',20);
-title('Exact posterior variance','FontSize',18,'FontWeight','normal');
+set(gca, 'FontSize', 16);
+xlabel('$t_{1}$','interpreter','latex','fontsize',28); 
+ylabel('$t_{2}$','interpreter','latex','fontsize',28);
+title('Exact posterior variance','FontSize',20,'FontWeight','normal');
 
 
 %---plot generalized eigenvalues of (M,Gamma) and projections---

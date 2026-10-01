@@ -28,26 +28,34 @@ t = -pi/2 + (0.5:n-0.5)*h_t;
 A = zeros(m, n);
 
 if strcmp(type, 'exp')
-    % K(s,t) = (cos(s) + cos(t))^2 * (sin(u)/u)^2, 其中 u = pi*(sin(s) + sin(t))
+    % K(s,t) = (cos(s) + cos(t))^2 * (sin(u)/u)^2,
+    % where u = pi*(sin(s) + sin(t))
     for i = 1:m
         for j = 1:n
             u_val = pi * (sin(s(i)) + sin(t(j)));
-        
             if abs(u_val) < 1e-12
                 sterm = 1;
             else
                 sterm = (sin(u_val)/u_val)^2;
             end
-        
             A(i,j) = (cos(s(i)) + cos(t(j)))^2 * sterm;
         end
     end
 elseif strcmp(type, 'poly')
     for i = 1:m
         for j = 1:n
-            % sterm  = abs(sin(s(i)*t(j)+1));
-            % A(i,j) = sterm / t(j);
             A(i,j) = exp(-abs(s(i)-t(j))/10);
+        end
+    end
+elseif strcmp(type, 'gabor')
+    % Gaussian-windowed oscillatory (Gabor-type) kernel
+    % phi(s,t) = exp(-(s-t)^2/(2*ell^2)) * cos(omega0*(s-t))
+    ell = 0.1;
+    omega0 = 40;
+    for i = 1:m
+        for j = 1:n
+            d = s(i) - t(j);
+            A(i,j) = exp(-d^2/(2*ell^2)) * cos(omega0*d);
         end
     end
 else
@@ -57,15 +65,20 @@ end
 A = A * h_t;
 
 % generate a true x
-l = 0.4;
+% generate a true x
+if strcmp(type, 'gabor')
+    l = 0.06;
+else
+    l = 0.4;
+end
 sigma = 0.2;
 
 s_start = -pi/2;
 s_end = pi/2;
-s = linspace(s_start, s_end, n)'; 
+s_gp = linspace(s_start, s_end, n)'; 
 
 % Using the squared distance matrix: (s_i - s_j)^2
-[S1, S2] = meshgrid(s, s);
+[S1, S2] = meshgrid(s_gp, s_gp);
 dist_sq = (S1 - S2).^2;
 K = sigma^2 * exp(-dist_sq / (2 * l^2)) + 1e-10 * eye(n);
 L = chol(K, 'lower');
